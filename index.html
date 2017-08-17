@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+    <script src='worker.js'></script>
+
+    <div>
+        Web Worker Example Page
+    </div>
+    <button onclick="startWorker()">Start</button>
+    <button onclick="stopWorker()">Stop</button>
+
+    <h1>Count :
+        <output id='result'></output>
+    </h1>
+
+    <button onclick='getLocation()'>Get Location</button>
+
+    <div>
+        <output id='result2'></output>
+    </div>
+
+    <script>
+        var x = document.getElementById('result2');
+        function getLocation() {
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                x.innerHTML = "Geolocation not supported";
+            }
+        }
+
+        function showPosition(position){
+            x.innerHTML = "Longitude: " + position.coords.latitude + '<br>Longitude: ' + position.coords.longitude;
+        }
+        function startWorker() {
+            if (typeof (Worker) !== 'undefined') {
+                console.log("web worker supported");
+                if (typeof (w) == "undefined") {
+                    w = new Worker('worker.js');
+                }
+                //post message listener to catch message from web worker
+                w.onmessage = function (event) {
+                    document.getElementById('result').innerHTML = event.data;
+                }
+            } else {
+                console.log("web worker not supported");
+            }
+        }
+        function stopWorker() {
+            w.terminate();
+            w = undefined;
+        }
+    </script>
+
+</body>
+
+</html>
